@@ -8,7 +8,10 @@ class SelectionStrategy(Enum):
     NEWEST = "newest"
 
 
-def find(path: Union[Path, str], strategy: SelectionStrategy = SelectionStrategy.NEWEST) -> tuple[str, str] | None:
+DEFAULT_PATH = Path.cwd()
+
+
+def find(path: Union[Path, str] = DEFAULT_PATH, strategy: SelectionStrategy = SelectionStrategy.NEWEST) -> tuple[str, str] | None:
     """Find the matching certificate and private key files for a given path.
 
     Returns a tuple (cert, key) or None.
@@ -45,9 +48,12 @@ def find(path: Union[Path, str], strategy: SelectionStrategy = SelectionStrategy
                 if key_file.is_file() and cert_file.is_file():
                     pair = cert_file, key_file
                     candidates.append(pair)
+        if len(candidates) == 0:
+            return None
         if len(candidates) == 1:
             cert, key = candidates[0]
             return str(cert), str(key)
+        "If we made it this far then there are multiple candidates. We need to apply the selection strategy to pick one."
         if strategy == SelectionStrategy.ALPHABETICAL:
             candidates.sort(key=lambda pair: pair[0].name)
         elif strategy == SelectionStrategy.NEWEST:

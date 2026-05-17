@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "certpair"
 version = "0.1.0"
-description = "Find matching certificate and private key files using local mTLS file naming conventions."
+description = "Find matching certificate and private key files using our file naming conventions."
 readme = "README.md"
 authors = [{ name = "Michael Murphy", email = "mmurph51@nd.edu" }]
 requires-python = ">=3.8"
