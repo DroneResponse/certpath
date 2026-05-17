@@ -1,19 +1,90 @@
-[[]# certpath
+# certpair
 
-`certpath` finds matching certificate and private key files using SADE file naming conventions.
+`certpair` is a small Python library for locating a matching client certificate and
+private key on disk.
+
+It looks for `.crt` and `.key` files that share the same stem and returns them as
+`(cert_path, key_path)`, which makes the result easy to pass directly to clients
+such as `requests`.
+
+Use it when you want to:
+
+- search the current working directory for the best matching certificate pair
+- search a specific directory for matching `.crt` and `.key` files
+- start from either the certificate path or key path and resolve the pair
+
+Examples:
+
+```python
+import certpair
+
+# find a .crt and .key with the same stem in the current directory
+cert, key = certpair.find()
+
+# find a matching .crt and .key file in a directory
+cert, key = certpair.find("~/tls")
+
+# find a matching .crt and .key file in the same directory given a file path to one of them
+cert, key = certpair.find("~/tls/user123.crt")
+cert, key = certpair.find("~/tls/user123.key")
+```
+
+Here's a more complete example:
+```python
+import certpair
+import requests
+
+# find a .crt and .key with the same stem in the current directory
+cert_pair = certpair.find()
+# returns something like: ('/path/to/user123.crt', '/path/to/user123.key')
+
+# use the cert_pair with the requests library:
+resp = requests.get(
+    f"https://api.example.com/",
+    headers=_HEADERS,
+    params=params,
+    timeout=_TIMEOUT,
+    cert=cert_pair,
+)
+
+session = requests.Session()
+session.cert = certpair.find("~/tls/")
+```
 
 ## Installation
 
-Install directly from GitHub:
+For the fastest start, install directly from GitHub:
 
 ```bash
-pip install git+https://github.com/DroneResponse/certpath@main
+pip install git+https://github.com/DroneResponse/certpair@v1.0.0
 ```
 
-Or, if you have access to the internal package index:
+If you want to pin that in `requirements.txt`:
 
+```text
+certpair @ git+https://github.com/DroneResponse/certpair@v1.0.0
+```
+
+### Install from Internal Package Index
+If you have access to our internal package index (via Zero Tier), then you can install from there directly.
+
+> [!IMPORTANT]
+> Make sure `pip` is already configured to use the internal index before using the following two examples.
+>
+> To configure `pip` you can set this environment variable:
+> ```
+> export PIP_INDEX_URL="https://..."
+> ```
+
+To install using pip:
 ```bash
-pip install certpath
+pip install certpair
+```
+
+To install using a `requirements.txt` file:
+
+```text
+certpair
 ```
 
 ## Development Setup
