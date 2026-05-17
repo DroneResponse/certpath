@@ -8,22 +8,36 @@ class SelectionStrategy(Enum):
     NEWEST = "newest"
 
 
-DEFAULT_PATH = Path.cwd()
+def find(path: Union[Path, str, None] = None, strategy: SelectionStrategy = SelectionStrategy.NEWEST) -> tuple[str, str] | None:
+    """Return a matching certificate and private key pair.
 
+    The returned tuple is in the form ``(cert_file, key_file)`` so it can be
+    passed directly to libraries such as ``requests`` that expect a client
+    certificate pair.
 
-def find(path: Union[Path, str] = DEFAULT_PATH, strategy: SelectionStrategy = SelectionStrategy.NEWEST) -> tuple[str, str] | None:
-    """Find the matching certificate and private key files for a given path.
-
-    Returns a tuple (cert, key) or None.
-
-    The goal is to make a tuple that you can directly use with requests' cert argument, which expects (cert_file, key_file).
+    If ``path`` is omitted, the current working directory is searched. When a
+    directory contains more than one matching pair, ``strategy`` controls which
+    pair is selected.
 
     Args:
-        path (Union[Path, str]): The path to the certificate file, key file, or a directory containing the certificate and key files.
-        strategy (SelectionStrategy, optional): The strategy to use when multiple certificate-key pairs are found in a directory. Defaults to SelectionStrategy.NEWEST. The "newest" strategy selects the most recently modified certificate file, while the "alphabetical" strategy selects the certificate file that comes first when using string sort order.
+        path (Union[Path, str, None], optional): A certificate file, key file,
+            or directory to search. If omitted, the current working directory is
+            used.
+        strategy (SelectionStrategy, optional): How to choose a pair when more
+            than one matching certificate/key pair is found in a directory.
+            ``SelectionStrategy.NEWEST`` picks the most recently modified
+            certificate. ``SelectionStrategy.ALPHABETICAL`` picks the pair whose
+            certificate filename sorts first.
+
     Returns:
-        tuple[str, str] | None: A tuple containing the paths to the certificate and private key files, or None if no matching files are found.
+        tuple[str, str] | None: The matching certificate and key paths, or
+        ``None`` if no matching pair is found. The returned tuple is in the form
+        ``(cert_file, key_file)`` so it can be passed directly to the``requests``
+        library.
     """
+    if path is None:
+        path = Path.cwd()
+
     if isinstance(path, str):
         path = Path(path)
     
