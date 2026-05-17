@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "certpair"
-version = "1.0.0"
+version = "1.0.1"
 description = "Find matching certificate and private key files using our file naming conventions."
 readme = "README.md"
 authors = [{ name = "Michael Murphy", email = "mmurph51@nd.edu" }]
@@ -31,6 +31,6 @@ where = ["src"]
 # certpair = "certpair._cli:main"
 
 [tool.bumpversion]
-current_version = "1.0.0"
+current_version = "1.0.1"
 commit = true
 tag = true
