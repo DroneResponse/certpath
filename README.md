@@ -15,8 +15,29 @@ Use it when you want to:
 
 Examples:
 
+Given a config.json such as:
+
+```json
+{
+  "sade_api_url": "https://api.sadezone.org",
+  "public_cert": "/some/path/user123.crt",
+  "private_key": "/another/path/user123.key",
+  "tls_path": "~/tls"
+}
+```
+
+Here's what you can do with this library:
 ```python
 import certpair
+import json
+
+with open("config.json") as f:
+    config = json.load(f)
+
+# find the cert + key for the app by checking env vars or config file
+cert, key = certpair.resolve(config)
+# cert = "/some/path/user123.crt"
+# key = "/another/path/user123.key"
 
 # find a .crt and .key with the same stem in the current directory
 cert, key = certpair.find()
