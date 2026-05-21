@@ -153,13 +153,13 @@ cert = certpair.resolve(config)
 For the fastest start, install directly from GitHub:
 
 ```bash
-pip install git+https://github.com/DroneResponse/certpair@v1.0.0
+pip install git+https://github.com/DroneResponse/certpair@v1.1.1
 ```
 
 If you want to pin that in `requirements.txt`:
 
 ```text
-certpair @ git+https://github.com/DroneResponse/certpair@v1.0.0
+certpair @ git+https://github.com/DroneResponse/certpair@v1.1.1
 ```
 
 ### Install from Internal Package Index
