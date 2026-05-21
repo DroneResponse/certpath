@@ -7,11 +7,25 @@ It looks for `.crt` and `.key` files that share the same stem and returns them a
 `(cert_path, key_path)`, which makes the result easy to pass directly to clients
 such as `requests`.
 
-Use it when you want to:
+For example, suppose the `~/tls/` directory contains:
+```
+~/tls
+❯ ls -1
+user123.crt
+user123.key
 
+```
+
+In this cae, both files share the same filename stem (that is `user123`). This python library would recognize these files as forming a "matching certificate and private key" because the stems match. 
+
+Use this library when you want to:
+
+- provide an easy way for Python applications to locate a certificate/private key pair using well-known environment variables, config files, and filesystem conventions
 - search the current working directory for the best matching certificate pair
 - search a specific directory for matching `.crt` and `.key` files
-- start from either the certificate path or key path and resolve the pair
+- start with either a certificate path or a key path and resolve the pair
+
+Rather than writing custom logic to search the filesystem for a certificate-pair in every application, this library provides a reusable and convention-driven approach to certificate discovery. Applications automatically gain support for shared environment variables, config-file formats, and filesystem conventions.
 
 Examples:
 
@@ -44,10 +58,19 @@ cert, key = certpair.find()
 
 # find a matching .crt and .key file in a directory
 cert, key = certpair.find("~/tls")
+# If more than one cert/key pair exists in this directory, then return the pair
+# with the most recently modified certificate.
 
-# find a matching .crt and .key file in the same directory given a file path to one of them
-cert, key = certpair.find("~/tls/user123.crt")
+# Given either file in a certificate/key pair, locate the matching pair.
+# Starting from the certificate path:
+cert, key = certpair.find("~/tls/user123.crt") 
+# Starting from the private key path:
 cert, key = certpair.find("~/tls/user123.key")
+# If a matching pair exists, both examples return:
+# cert = "~/tls/user123.crt"
+# key  = "~/tls/user123.key"
+#
+# Otherwise, find() returns None.
 ```
 
 Here's a more complete example:
@@ -68,8 +91,10 @@ resp = requests.get(
     cert=cert_pair,
 )
 
+# or use it with a requests.Session object:
 session = requests.Session()
 session.cert = certpair.find("~/tls/")
+resp2 = session.get("https://api.example.com/")
 ```
 
 ## Config Details
